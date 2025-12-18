@@ -5,13 +5,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import jdk.jfr.Category;
+import project.entity.Category;
 import project.entity.Material;
 import project.entity.Project;
 import project.entity.Step;
@@ -106,10 +105,12 @@ public class ProjectDao extends DaoBase {
 				Project project = null;
 				try(PreparedStatement stmt = conn.prepareStatement(sql)){
 					setParameter(stmt, 1, projectId, Integer.class);
-				
+					
 				try(ResultSet rs = stmt.executeQuery()){
 					if(rs.next()) {
+						System.out.println("before");
 						project = extract(rs, Project.class);
+						System.out.println("after");
 					}
 				}
 			}
