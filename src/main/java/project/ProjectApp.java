@@ -142,7 +142,6 @@ public class ProjectApp {
 
 		Project dbProject = ProjectService.addProject(project);
 		System.out.println("You have successfully created project: " + dbProject);
-
 	}
 
 	private BigDecimal getDecimalInput(String prompt) {
