@@ -20,11 +20,6 @@ public class ProjectService {
 	public static List<Project> fethAllProjects() {
 		return projectDao.fetchAllProjects();
 	}
-	// public Project fetchProjectById(Integer projectId) {
-	// return projectDao.fetchProjectById(projectId).orElseThroww(() -> new
-	// NoSuchElementException(
-	// "Project with project ID =" +porjectId + " does not exist."));
-	// }
 
 	public static Project fetchProjectById(Integer projectId) {
 		return projectDao.fetchProjectById(projectId).orElseThrow(()-> new NoSuchElementException("Project with project ID=" + projectId + " does not exist."));

@@ -15,6 +15,8 @@ public class ProjectApp {
 	private ProjectService projectsService = new ProjectService();
 	private Scanner scanner = new Scanner(System.in);
 	private Project curProject;
+	
+	//the main menu options
 	//@formatter:off
 	private List<String> operations = List.of(
 			"1) Add a project",
@@ -28,7 +30,7 @@ public class ProjectApp {
 	public static void main(String[] args) {
 		new ProjectApp().processUserSelections();
 	}
-
+	//the main switch case for all options in menu
 	private void processUserSelections() {
 		boolean done = false;
 		while (!done) {
@@ -63,7 +65,7 @@ public class ProjectApp {
 		;
 
 	}
-
+	
 	private void deleteProject() {
 		listProjects();
 		Integer projectId = getIntInput("Enter the project Id to select te project. ");
@@ -76,7 +78,6 @@ public class ProjectApp {
 
 	private void updateProjectDetails() {
 		if(Objects.isNull(curProject)) {
-			//selectProject();
 			System.out.println("\nPlease select a project.");
 			return;
 		}
@@ -88,6 +89,11 @@ public class ProjectApp {
 		BigDecimal actualHours = getDecimalInput("Enter the actual hours [" + curProject.getActualHours() + "]");
 		
 		Integer difficulty = getIntInput("Enter the project difficulty (1-5) [" + curProject.getDifficulty() + "]");
+		//this checks if the difficulty entered is within the specified range and asks for new input if its not
+		while(difficulty > 5 || difficulty < 1) {
+			System.out.println("\n" + difficulty + " is not a valid difficulty. Please try again.");
+			difficulty = getIntInput("Enter the project difficulty (1-5) [" + curProject.getDifficulty() + "]");
+		}
 		
 		String notes = getStringInput("Enter the project notes [" + curProject.getNotes() + "]");
 		
@@ -131,6 +137,11 @@ public class ProjectApp {
 		BigDecimal estimatedHours = getDecimalInput("Enter the estimated hours");
 		BigDecimal actualHours = getDecimalInput("Enter the actual hours");
 		Integer difficulty = getIntInput("Enter the project difficulty (1-5)");
+		//this checks if the input difficulty is with in specified range and asks the prompt again if not
+		while(difficulty > 5 || difficulty < 1) {
+			System.out.println("\n" + difficulty + " is not a valid difficulty. Please try again.");
+			difficulty = getIntInput("Enter the project difficulty (1-5)");
+		}
 		String notes = getStringInput("enter the project notes");
 		Project project = new Project();
 

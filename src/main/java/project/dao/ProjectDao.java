@@ -73,14 +73,15 @@ public class ProjectDao extends DaoBase {
 			try(ResultSet rs = stmt.executeQuery()){
 				List<Project> projects = new LinkedList<>();
 				while(rs.next()) {
-					Project project = new Project();
+					projects.add(extract(rs, Project.class));
+					/*Project project = new Project();
 					project.setActualHours(rs.getBigDecimal("actual_hours"));
 					project.setDifficulty(rs.getObject("difficulty", Integer.class));
 					project.setEstimatedHours(rs.getBigDecimal("estimated_hours"));
 					project.setNotes(rs.getString("notes"));
 					project.setProjectId(rs.getObject("project_id", Integer.class));
 					project.setProjectName(rs.getString("project_name"));
-					projects.add(project);
+					projects.add(project);*/
 					
 				}
 				return projects;
@@ -108,9 +109,7 @@ public class ProjectDao extends DaoBase {
 					
 				try(ResultSet rs = stmt.executeQuery()){
 					if(rs.next()) {
-						System.out.println("before");
 						project = extract(rs, Project.class);
-						System.out.println("after");
 					}
 				}
 			}
@@ -135,9 +134,9 @@ public class ProjectDao extends DaoBase {
 	private List<Step> fetchStepsForProject(Connection conn, Integer projectId) throws SQLException{
 		//@formatter:off
 				String sql = ""
-						+ "SELECT c.* FROM " + CATEGORY_TABLE + " c "
-						+ "JOIN " + PROJECT_CATEGORY_TABLE + " pc Using (category_id) "
-						+ "WHERE project_id = ?";
+						+ "SELECT * FROM "
+						+ STEP_TABLE
+						+ " WHERE project_id = ?";
 				//@formatter:on
 				try(PreparedStatement stmt = conn.prepareStatement(sql)){
 					setParameter(stmt, 1, projectId, Integer.class);
@@ -146,7 +145,6 @@ public class ProjectDao extends DaoBase {
 						while(rs.next()) {
 							steps.add(extract(rs, Step.class));
 						}
-						System.out.println(steps);
 						return steps; 
 					}
 				}
@@ -169,7 +167,6 @@ public class ProjectDao extends DaoBase {
 						while(rs.next()) {
 							categories.add(extract(rs, Category.class));
 						}
-						System.out.println(categories);
 						return categories; 
 					}
 				}
@@ -178,9 +175,9 @@ public class ProjectDao extends DaoBase {
 	private List<Material> fetchMaterialsForProject(Connection conn, Integer projectId) throws SQLException {
 		//@formatter:off
 		String sql = ""
-				+ "SELECT c.* FROM " + CATEGORY_TABLE + " c "
-				+ "JOIN " + PROJECT_CATEGORY_TABLE + " pc Using (category_id) "
-				+ "WHERE project_id = ?";
+				+ "SELECT * FROM "
+				+ MATERIAL_TALBE
+				+ " WHERE project_id = ?";
 		//@formatter:on
 		try(PreparedStatement stmt = conn.prepareStatement(sql)){
 			setParameter(stmt, 1, projectId, Integer.class);
@@ -189,7 +186,6 @@ public class ProjectDao extends DaoBase {
 				while(rs.next()) {
 					materials.add(extract(rs, Material.class));
 				}
-				System.out.println(materials);
 				return materials; 
 			}
 		}
@@ -244,7 +240,6 @@ public class ProjectDao extends DaoBase {
 				setParameter(stmt, 1, projectId, Integer.class);
 				
 				boolean deleted = stmt.executeUpdate() == 1;
-				System.out.println(deleted);
 				commitTransaction(conn);
 				
 				return deleted;
