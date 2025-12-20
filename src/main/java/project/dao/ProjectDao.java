@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import jdk.jfr.Category;
+import project.entity.Category;
 import project.entity.Material;
 import project.entity.Project;
 import project.entity.Step;
@@ -129,7 +129,6 @@ public class ProjectDao extends DaoBase {
 		 catch(SQLException e) {
 			 throw new DbException(e);
 		 }
-		
 	}
 
 	private List<Step> fetchStepsForProject(Connection conn, Integer projectId) throws SQLException{
@@ -146,6 +145,7 @@ public class ProjectDao extends DaoBase {
 						while(rs.next()) {
 							steps.add(extract(rs, Step.class));
 						}
+						System.out.println(steps);
 						return steps; 
 					}
 				}
@@ -168,6 +168,7 @@ public class ProjectDao extends DaoBase {
 						while(rs.next()) {
 							categories.add(extract(rs, Category.class));
 						}
+						System.out.println(categories);
 						return categories; 
 					}
 				}
@@ -187,8 +188,72 @@ public class ProjectDao extends DaoBase {
 				while(rs.next()) {
 					materials.add(extract(rs, Material.class));
 				}
+				System.out.println(materials);
 				return materials; 
 			}
+		}
+	}
+
+	public boolean modifyProjectDetails(Project project) {
+		//@formatter:off
+		String sql = "" 
+				+ "UPDATE " + PROJECT_TABLE + " p "
+				+ "SET " + "project_name = ?"
+				+ ", estimated_hours = ?"
+				+ ", actual_hours = ?"
+				+ ", difficulty = ?"
+				+ ", notes = ?" 
+				+ " WHERE project_id = ?";
+		//@formatter:on		
+		try(Connection conn = DbConnection.getConnection()){
+			startTransaction(conn);
+			try(PreparedStatement stmt = conn.prepareStatement(sql)){
+				setParameter(stmt, 1, project.getProjectName(), String.class);
+				setParameter(stmt, 2, project.getEstimatedHours(), BigDecimal.class);
+				setParameter(stmt, 3, project.getActualHours(), BigDecimal.class);
+				setParameter(stmt, 4, project.getDifficulty(), Integer.class);
+				setParameter(stmt, 5, project.getNotes(), String.class);
+				setParameter(stmt, 6, project.getProjectId(), Integer.class);
+				
+				boolean modified = stmt.executeUpdate() == 1;
+				commitTransaction(conn);
+				
+				return modified;
+			}
+			catch(Exception e) {
+				rollbackTransaction(conn);
+				throw new DbException(e);
+			}
+		}
+		catch(SQLException e) {
+			throw new DbException(e);
+		}
+	}
+
+	public boolean deleteProject(Integer projectId) {
+		//@formatter:off
+		String sql = ""
+				+ "DELETE FROM " + PROJECT_TABLE 
+				+ " WHERE project_id = ?";
+		//@formatter:on
+		
+		try(Connection conn = DbConnection.getConnection()){
+			startTransaction(conn);
+			try(PreparedStatement stmt = conn.prepareStatement(sql)){
+				setParameter(stmt, 1, projectId, Integer.class);
+				
+				boolean deleted = stmt.executeUpdate() == 1;
+				System.out.println(deleted);
+				commitTransaction(conn);
+				
+				return deleted;
+			}
+			catch(Exception e) {
+				rollbackTransaction(conn);
+				throw new DbException(e);
+			}
+		}catch(SQLException e) {
+			throw new DbException(e);
 		}
 	}
 

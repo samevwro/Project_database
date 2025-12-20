@@ -8,9 +8,9 @@ DROP TABLE IF EXISTS project;
 CREATE TABLE project(
 	project_id INT AUTO_INCREMENT NOT NULL,
 	project_name VARCHAR(128) NOT NULL,
-	estimated_hours INT NOT NULL DEFAULT 0,
-	actual_hours INT DEFAULT 0,
-	difficulty VARCHAR(15),
+	estimated_hours DECIMAL(7,2),
+	actual_hours DECIMAL(7,2),
+	difficulty INT,
 	notes TEXT,
 	PRIMARY KEY(project_id) 
 );
@@ -34,7 +34,7 @@ CREATE TABLE step(
 	step_text TEXT NOT NULL,
 	step_order INT NOT NULL,
 	PRIMARY KEY(step_id),
-	FOREIGN KEY(project_id) REFERENCES project (project_id)
+	FOREIGN KEY(project_id) REFERENCES project (project_id) ON DELETE CASCADE
 );
 CREATE TABLE project_category(
 	project_id INT NOT NULL,
